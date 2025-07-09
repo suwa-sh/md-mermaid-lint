@@ -1,0 +1,11 @@
+# Ignore node_modules, it's a dependency, not part of the package
+node_modules
+
+# Ignore logs
+logs
+*.log
+npm-debug.log*
+
+# Ignore OS-specific files
+.DS_Store
+Thumbs.db
