@@ -127,7 +127,7 @@ describe('md-mermaid-lint CLI', () => {
       //------------------------------
       expect(result.code).toBe(0);
       expect(result.stdout).toContain('✅ All Mermaid diagrams are syntactically correct.');
-    }, 30000);
+    }, 60000);
 
     test('md-mermaid-lint_複数の有効なファイルをワイルドカードで検証した場合_全てのファイルが正常に検証されること', async () => {
       //------------------------------

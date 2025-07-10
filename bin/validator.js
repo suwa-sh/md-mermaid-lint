@@ -11,7 +11,7 @@ async function getBrowser() {
   if (browserPromise) return browserPromise;
   
   browserPromise = puppeteer.launch({
-    headless: 'new', // 新しいヘッドレスモード
+    headless: true, // 最新のheadlessモード
     args: [
       '--no-sandbox', 
       '--disable-setuid-sandbox',
@@ -46,13 +46,13 @@ async function validateMermaidCode(code) {
       <!DOCTYPE html>
       <html>
         <head>
-          <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+          <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
         </head>
         <body>
           <div id="mermaid-container"></div>
         </body>
       </html>
-    `);
+    `, { waitUntil: 'networkidle0', timeout: 60000 });
     
     // Mermaidの初期化と検証を実行
     const result = await page.evaluate(async (mermaidCode) => {
