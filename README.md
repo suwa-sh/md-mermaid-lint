@@ -5,29 +5,35 @@ A simple command-line tool to validate Mermaid syntax within your Markdown files
 ## Features
 
 - Scans Markdown files using glob patterns.
-- Extracts all `mermaid...``` ` code blocks.
+- Extracts all ` ```mermaid ... ``` ` code blocks.
 - Validates the syntax of each block using the official `mermaid` library.
 - Reports errors with the file name and the line number of the faulty block.
 - Exits with a non-zero status code if any error is found, making it ideal for CI/CD integration.
+
+## Install
+
+```bash
+npm i -g md-mermaid-lint
+```
 
 ## Usage
 
 You can run this tool directly using `npx` without a global installation.
 
 ```bash
-npx md-mermaid-lint "path/to/your/docs/**/*.md"
+md-mermaid-lint "path/to/your/docs/**/*.md"
 ```
 
 ### Examples
 
 Check all Markdown files in the current directory and its subdirectories:
 ```bash
-npx md-mermaid-lint "**/*.md"
+md-mermaid-lint "**/*.md"
 ```
 
 Check only files in the `docs/` directory:
 ```bash
-npx md-mermaid-lint "docs/*.md"
+md-mermaid-lint "docs/*.md"
 ```
 
 ## How It Works
@@ -37,4 +43,3 @@ This tool programmatically uses the `mermaid.parse()` API to attempt to parse ev
 ## License
 
 MIT
-```
