@@ -1,0 +1,9 @@
+version: '3.8'
+
+services:
+  md-mermaid-lint:
+    build: .
+    volumes:
+      - ./test:/workspace:ro
+    working_dir: /workspace
+    command: ["*.md"]
