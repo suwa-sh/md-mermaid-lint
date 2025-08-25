@@ -98,12 +98,12 @@ async function validateMermaidCode(code) {
 
 export async function validateFile(filePath) {
   const content = await fs.readFile(filePath, 'utf-8');
-  const mermaidRegex = /```mermaid\n(.*?)\n```/gs;
+  const mermaidRegex = /^([ \t]*)```mermaid\n([\s\S]*?)\n\1```/gm;
   let match;
   const errors = [];
 
   while ((match = mermaidRegex.exec(content)) !== null) {
-    const mermaidCode = match[1];
+    const mermaidCode = match[2];
     const lineNumber = content.substring(0, match.index).split('\n').length;
 
     const result = await validateMermaidCode(mermaidCode);
