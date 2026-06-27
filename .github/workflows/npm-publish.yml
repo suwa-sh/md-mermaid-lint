@@ -1,0 +1,79 @@
+name: Publish to npm
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'package.json'
+      - 'bin/**'
+      - 'loader.mjs'
+      - '.github/workflows/npm-publish.yml'
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write  # for npm Trusted Publishing (OIDC)
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          registry-url: 'https://registry.npmjs.org/'
+
+      - name: Upgrade npm (Trusted Publishing requires >= 11.5.1)
+        run: npm install -g npm@latest
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Check version and publish
+        id: version_check
+        run: |
+          LOCAL_VERSION=$(node -p "require('./package.json').version")
+          echo "Local version: $LOCAL_VERSION"
+
+          LATEST_VERSION=$(npm view md-mermaid-lint version 2>/dev/null || echo "")
+          echo "Latest published version: ${LATEST_VERSION:-<none>}"
+
+          if [ -n "$LATEST_VERSION" ]; then
+            HIGHER=$(LOCAL="$LOCAL_VERSION" LATEST="$LATEST_VERSION" node -e '
+              const parse = (v) => {
+                const m = String(v).match(/^(\d+)\.(\d+)\.(\d+)$/);
+                if (!m) { console.error("Invalid semver:", v); process.exit(2); }
+                return [Number(m[1]), Number(m[2]), Number(m[3])];
+              };
+              const [la, lb, lc] = parse(process.env.LOCAL);
+              const [ra, rb, rc] = parse(process.env.LATEST);
+              const cmp = la - ra || lb - rb || lc - rc;
+              console.log(cmp > 0 ? "yes" : (cmp === 0 ? "equal" : "no"));
+            ')
+            if [ "$HIGHER" = "no" ]; then
+              echo "::error::Local version $LOCAL_VERSION is lower than published $LATEST_VERSION. Refusing to downgrade."
+              exit 1
+            fi
+            if [ "$HIGHER" = "equal" ]; then
+              echo "Version $LOCAL_VERSION is already published to npm"
+              echo "should_publish=false" >> $GITHUB_OUTPUT
+              exit 0
+            fi
+          fi
+
+          if npm view md-mermaid-lint@$LOCAL_VERSION version 2>/dev/null; then
+            echo "Version $LOCAL_VERSION is already published to npm"
+            echo "should_publish=false" >> $GITHUB_OUTPUT
+          else
+            echo "Version $LOCAL_VERSION is not yet published"
+            echo "should_publish=true" >> $GITHUB_OUTPUT
+            echo "version=$LOCAL_VERSION" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Publish to npm
+        if: steps.version_check.outputs.should_publish == 'true'
+        run: npm publish --provenance --access public
