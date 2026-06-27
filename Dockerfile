@@ -1,5 +1,5 @@
 # Node.js slim image for smaller size
-FROM node:20-slim
+FROM node:26-slim
 
 # Install Chromium and its dependencies for Puppeteer
 RUN apt-get update && apt-get install -y \
