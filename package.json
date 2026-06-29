@@ -28,7 +28,7 @@
   "dependencies": {
     "canvas": "^3.1.2",
     "dompurify": "^3.2.6",
-    "glob": "^11.0.3",
+    "glob": "^13.0.6",
     "jsdom": "^26.1.0",
     "mermaid": "^11.8.1",
     "puppeteer": "^24.12.1"
