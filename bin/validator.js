@@ -1,8 +1,10 @@
 import fs from 'node:fs/promises';
+import { fileURLToPath } from 'node:url';
 import puppeteer from 'puppeteer';
 
 let browser = null;
 let browserPromise = null;
+const mermaidScriptPath = fileURLToPath(new URL('../node_modules/mermaid/dist/mermaid.min.js', import.meta.url));
 
 // ブラウザの初期化（シングルトン）
 async function getBrowser() {
@@ -45,34 +47,20 @@ async function validateMermaidCode(code) {
     await page.setContent(`
       <!DOCTYPE html>
       <html>
-        <head>
-          <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
-        </head>
+        <head></head>
         <body>
           <div id="mermaid-container"></div>
         </body>
       </html>
-    `, { waitUntil: 'networkidle0', timeout: 60000 });
+    `, { waitUntil: 'domcontentloaded', timeout: 60000 });
+
+    await page.addScriptTag({ path: mermaidScriptPath });
     
     // Mermaidの初期化と検証を実行
     const result = await page.evaluate(async (mermaidCode) => {
-      // Mermaidの初期化を待つ
-      await new Promise(resolve => {
-        if (window.mermaid) {
-          window.mermaid.initialize({ 
-            startOnLoad: false,
-            securityLevel: 'loose'
-          });
-          resolve();
-        } else {
-          window.addEventListener('load', () => {
-            window.mermaid.initialize({ 
-              startOnLoad: false,
-              securityLevel: 'loose'
-            });
-            resolve();
-          });
-        }
+      window.mermaid.initialize({ 
+        startOnLoad: false,
+        securityLevel: 'loose'
       });
       
       // parse関数を使用して検証
