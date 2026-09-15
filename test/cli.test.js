@@ -284,10 +284,12 @@ describe('md-mermaid-lint CLI', () => {
       //------------------------------
       expect(result.code).toBe(1);
       expect(result.stdout).toContain('Validating 10 file(s)...');
+      expect(result.stderr).toContain('❌ Error: fixtures/edge-cases/malformed-blocks.md');
+      expect(result.stderr).toContain('❌ Error: fixtures/edge-cases/indented-blocks.md');
       expect(result.stderr).toContain('❌ Error: fixtures/invalid/syntax-error.md');
       expect(result.stderr).toContain('❌ Error: fixtures/invalid/multiple-errors.md');
       expect(result.stderr).toContain('❌ Error: fixtures/invalid/mixed-valid-invalid.md');
-      expect(result.stderr).toContain('Total 7 syntax error(s) detected.');
+      expect(result.stderr).toContain('Total 9 syntax error(s) detected.');
     }, 60000);
   });
 });
