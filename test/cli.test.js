@@ -283,7 +283,7 @@ describe('md-mermaid-lint CLI', () => {
       // 検証 (Assert)
       //------------------------------
       expect(result.code).toBe(1);
-      expect(result.stdout).toContain('Validating 9 file(s)...');
+      expect(result.stdout).toContain('Validating 10 file(s)...');
       expect(result.stderr).toContain('❌ Error: fixtures/invalid/syntax-error.md');
       expect(result.stderr).toContain('❌ Error: fixtures/invalid/multiple-errors.md');
       expect(result.stderr).toContain('❌ Error: fixtures/invalid/mixed-valid-invalid.md');
