@@ -34,7 +34,7 @@
     "puppeteer": "^25.2.1"
   },
   "devDependencies": {
-    "esmock": "^2.7.1",
+    "esmock": "^3.0.0",
     "jest": "^30.0.4"
   }
 }
